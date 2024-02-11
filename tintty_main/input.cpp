@@ -1,6 +1,6 @@
 #include "Arduino.h"
-#include <TouchScreen.h>
-#include <Adafruit_GFX.h>
+#include <SPFD5408_TouchScreen.h>
+#include <SPFD5408_Adafruit_GFX.h> 
 
 #include "tintty.h"
 #include "input.h"

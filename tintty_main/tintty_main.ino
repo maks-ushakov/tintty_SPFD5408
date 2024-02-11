@@ -1,3 +1,6 @@
+//#include <pin_magic.h>
+//#include <registers.h>
+
 /**
  * TinTTY main sketch
  * by Nick Matantsev 2017
@@ -6,16 +9,21 @@
  * and modified by Peter Scargill.
  */
 
-#include <SPI.h>
+//#include <SPI.h>
 
-#include <Adafruit_GFX.h>
-#include <MCUFRIEND_kbv.h>
+//#include <Adafruit_GFX.h>
+//#include <MCUFRIEND_kbv.h>
+// library SPFD5408 
+
+#include "TFT_Display.h"
+
 
 #include "input.h"
 #include "tintty.h"
 
 // using stock MCUFRIEND 2.4inch shield
-MCUFRIEND_kbv tft;
+// MCUFRIEND_kbv tft;
+TFT_Display tft;
 
 struct tintty_display ili9341_display = {
   ILI9341_WIDTH,
@@ -23,22 +31,23 @@ struct tintty_display ili9341_display = {
   ILI9341_WIDTH / TINTTY_CHAR_WIDTH,
   (ILI9341_HEIGHT - KEYBOARD_HEIGHT) / TINTTY_CHAR_HEIGHT,
 
-  [=](int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color){
+  [](int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color){
     tft.fillRect(x, y, w, h, color);
   },
 
-  [=](int16_t x, int16_t y, int16_t w, int16_t h, uint16_t *pixels){
+  [](int16_t x, int16_t y, int16_t w, int16_t h, uint16_t *pixels){
     tft.setAddrWindow(x, y, x + w - 1, y + h - 1);
     tft.pushColors(pixels, w * h, 1);
   },
 
-  [=](int16_t offset){
+  [](int16_t offset){
     tft.vertScroll(0, (ILI9341_HEIGHT - KEYBOARD_HEIGHT), offset);
   }
 };
 
+
 // buffer to test various input sequences
-char *test_buffer = "-- \e[1mTinTTY\e[m --\r\n";
+String test_buffer = "-- \e[1mTinTTY\e[m --\r\n";
 uint8_t test_buffer_cursor = 0;
 
 void setup() {
@@ -50,7 +59,7 @@ void setup() {
   input_init();
 
   tintty_run(
-    [=](){
+    [](){
       // peek idle loop
       while (true) {
         // first peek from the test buffer
@@ -68,7 +77,7 @@ void setup() {
         input_idle();
       }
     },
-    [=](){
+    [](){
       while(true) {
         // process at least one idle loop first to allow input to happen
         tintty_idle(&ili9341_display);
@@ -85,7 +94,7 @@ void setup() {
         }
       }
     },
-    [=](char ch){ Serial.print(ch); },
+    [](String ch){ Serial.print(ch); },
     &ili9341_display
   );
 }

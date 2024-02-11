@@ -1,8 +1,12 @@
 #include "Arduino.h"
 
-#include <MCUFRIEND_kbv.h>
+// #include <MCUFRIEND_kbv.h>
+// library SPFD5408 
 
-extern MCUFRIEND_kbv tft;
+#include "TFT_Display.h"    // Core graphics library
+
+extern TFT_Display tft;
+
 
 // @todo move?
 #define ILI9341_WIDTH 240
