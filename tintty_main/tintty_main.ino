@@ -1,9 +1,9 @@
-//#include <pin_magic.h>
-//#include <registers.h>
-
 /**
+ * TinTTY for SPFD5408 display by Maks Ushakov
+ * Based on 
  * TinTTY main sketch
  * by Nick Matantsev 2017
+ * and SPFD5408 Library by Joao Lopes
  *
  * Original reference: VT100 emulation code written by Martin K. Schroeder
  * and modified by Peter Scargill.
@@ -15,15 +15,23 @@
 //#include <MCUFRIEND_kbv.h>
 // library SPFD5408 
 
-#include "TFT_Display.h"
+// #include "TFT_Display.h"
+#include <SPFD5408_Adafruit_TFTLCD.h>
 
 
 #include "input.h"
 #include "tintty.h"
 
+#define LCD_CS A3 // Chip Select goes to Analog 3
+#define LCD_CD A2 // Command/Data goes to Analog 2
+#define LCD_WR A1 // LCD Write goes to Analog 1
+#define LCD_RD A0 // LCD Read goes to Analog 0
+
+#define LCD_RESET A4 // Can alternately just connect to Arduino's reset pin
 // using stock MCUFRIEND 2.4inch shield
 // MCUFRIEND_kbv tft;
-TFT_Display tft;
+// TFT_Display tft;
+Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
 struct tintty_display ili9341_display = {
   ILI9341_WIDTH,
@@ -41,7 +49,7 @@ struct tintty_display ili9341_display = {
   },
 
   [](int16_t offset){
-    tft.vertScroll(0, (ILI9341_HEIGHT - KEYBOARD_HEIGHT), offset);
+    // tft.vertScroll(0, (ILI9341_HEIGHT - KEYBOARD_HEIGHT), offset);
   }
 };
 
@@ -55,6 +63,7 @@ void setup() {
 
   uint16_t tftID = tft.readID();
   tft.begin(tftID);
+  tft.setRotation(2);
 
   input_init();
 

@@ -6,8 +6,8 @@
 #include "input.h"
 
 // calibrated settings from TouchScreen_Calibr_native
-const int XP=8,XM=A2,YP=A3,YM=9; //240x320 ID=0x9341
-const int TS_LEFT=115,TS_RT=902,TS_TOP=72,TS_BOT=897;
+const int XP=6,XM=A2,YP=A1,YM=7; //240x320 ID=0x9341
+const int TS_LEFT=112,TS_RT=950,TS_TOP=40,TS_BOT=865;
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 TSPoint tp;
@@ -17,7 +17,7 @@ uint8_t touchCountdown = 0;
 
 uint8_t touchRisingCount = 0; // debounce counter for latch transition
 bool touchActive = false; // touch status latch state
-#define TOUCH_TRIGGER_COUNT 20
+#define TOUCH_TRIGGER_COUNT 2
 
 #define MINPRESSURE 200
 #define MAXPRESSURE 1000
@@ -312,6 +312,10 @@ void _input_process_touch(int16_t xpos, int16_t ypos) {
                 Serial.print((char)27); // Esc
                 Serial.print(tintty_cursor_key_mode_application ? 'O' : '['); // different code depending on terminal state
                 Serial.print((char)(activeKey->code - KEYCODE_ARROW_START + 'A'));
+            } else if (activeKey->code == 10) {
+              Serial.print(activeKey->code);
+             // Serial.println();
+
             } else {
                 Serial.print(activeKey->code);
             }
@@ -375,7 +379,6 @@ void input_idle() {
 
             const uint16_t xpos = map(tp.x, TS_LEFT, TS_RT, 0, ILI9341_WIDTH);
             const uint16_t ypos = map(tp.y, TS_TOP, TS_BOT, 0, ILI9341_HEIGHT);
-
             // @todo support autorepeat
             _input_process_touch(xpos, ypos);
         }
